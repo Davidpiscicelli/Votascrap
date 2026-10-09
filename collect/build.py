@@ -71,6 +71,8 @@ def compact_votes(votes, idx):
     """Votes : positions nominatives (id d'élu si connu), lignes de parti et dissidences."""
     out = []
     for v in votes:
+        if not (v["pour"] or v["contre"] or v["abstention"]):
+            continue  # scrutin secret ou décompte illisible
         pp = positions_par_parti(v)
         ligne = {p: max(c, key=c.get) for p, c in pp.items() if sum(c.values()) >= 2}
         pos, dissidents = [], []
@@ -168,9 +170,20 @@ def syntheses(questions, dossiers, votes, labels, n_mois=12):
 
 
 def compact_questions(qs):
-    keys = ["id", "parl", "type", "date", "auteur", "auteur_id", "parti", "destinataire", "fonction", "num",
-            "titre", "themes", "radar", "url", "assemblee", "publie"]
+    """Questions allégées : la fonction des ministres va dans ministres.json et le site reconstruit
+    l'URL officielle à partir de l'identifiant (voir questionUrl dans site/app.js)."""
+    keys = ["id", "parl", "type", "date", "auteur", "auteur_id", "parti", "destinataire", "num",
+            "titre", "themes", "radar", "assemblee", "publie"]
     return [{k: q[k] for k in keys if q.get(k) not in (None, "", [], False)} for q in qs]
+
+
+def ministres(qs):
+    """{destinataire: fonction la plus récente}."""
+    out = {}
+    for q in sorted(qs, key=lambda q: q["date"] or ""):
+        if q.get("destinataire") and q.get("fonction"):
+            out[q["destinataire"]] = q["fonction"]
+    return out
 
 
 def prompts_publics():
@@ -281,6 +294,7 @@ def main():
     write_json(data_path("questions-recentes.json"),
                compact_questions(sorted((q for q in questions if (q["date"] or "") >= depuis), key=lambda q: q["date"], reverse=True)))
     write_json(data_path("prompts.json"), prompts_publics())
+    write_json(data_path("ministres.json"), ministres(questions))
     with open(data_path("flux-radar.xml"), "w", encoding="utf-8") as f:
         f.write(flux_radar(dossiers, questions, SITE.get("url_publique", "")))
     write_json(data_path("meta.json"), meta, compact=False)

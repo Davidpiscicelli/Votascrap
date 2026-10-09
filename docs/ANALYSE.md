@@ -87,7 +87,7 @@ Le site (Nuxt + Drupal) ne publie pas de jeu de données ouvert. La recherche de
 
 ## 5. Limites et risques
 
-- **Mise en page des PDF** : sur deux colonnes, les listes de noms peuvent être coupées. Une liste n'est rattachée à un vote que si son effectif égale le décompte officiel. Sur les comptes rendus testés, 35 votes sur 37 avaient leur détail nominatif ; les autres n'affichent que les décomptes.
+- **Mise en page des PDF** : sur deux colonnes, les listes de noms peuvent être coupées. Une liste n'est rattachée à un vote que si son effectif égale le décompte officiel. Sur les 523 votes nominatifs de la législature (au 9 octobre 2026), 88 % ont leur détail nominatif ; les autres n'affichent que les décomptes officiels. Pour 90 votes, la phrase de résultat n'a pas pu être lue à sa place : le résultat est alors déduit des décomptes (oui > non), et la fiche le signale.
 - **Évolution des sites** : un changement de mise en page casse un collecteur. Les tests sur extraits réels et l'état des sources sur la page Méthode servent d'alerte.
 - **Résumés IA** : ils reposent sur un extrait du document déposé et peuvent manquer un amendement. Ils sont signalés comme tels et renvoient au texte officiel.
 - **Classement par mots-clés** : simple et transparent, mais imparfait (faux positifs et oublis). Les listes s'affinent dans `config/themes.json`.

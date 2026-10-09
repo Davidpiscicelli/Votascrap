@@ -95,6 +95,29 @@ def name_key(s):
     return " ".join(sorted(w for w in s.split() if len(w) > 1))
 
 
+PARTICULES = {"de", "du", "des", "van", "von", "der", "den", "le", "la", "d'", "d’", "di", "da"}
+
+
+def _titre_mot(w):
+    return "-".join("'".join(x[:1].upper() + x[1:].lower() for x in part.split("'")) for part in w.split("-"))
+
+
+def nom_lisible(s):
+    """« GOFFINET Anne-Catherine » → « Anne-Catherine Goffinet » ; « de WASSEIGE Olivier » → « Olivier de Wasseige »."""
+    words = (s or "").split()
+    nom = []
+    while words and (words[0].isupper() or words[0].lower() in PARTICULES) and len(words) > 1:
+        nom.append(words.pop(0))
+    if not nom or not words:
+        return (s or "").strip()
+    nom = [w.lower() if w.lower() in PARTICULES else _titre_mot(w) for w in nom]
+    return " ".join(words + nom)
+
+
+def noms_lisibles(s):
+    return ", ".join(nom_lisible(x.strip()) for x in (s or "").split(",") if x.strip())
+
+
 def date_fr(d):
     """'09/10/2026' -> '2026-10-09' (None si invalide)."""
     m = re.match(r"\s*(\d{1,2})/(\d{1,2})/(\d{4})", d or "")

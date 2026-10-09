@@ -54,8 +54,9 @@ class QuestionsEtDossiersWallonie(unittest.TestCase):
         qs = wallonie.parse_questions(fixture("wal_questions.html"), "Question écrite")
         self.assertEqual(len(qs), 3)
         q = qs[0]
-        self.assertEqual(q["auteur"], "GOFFINET Anne-Catherine")
-        self.assertEqual(q["destinataire"], "DALCQ Anne-Catherine")
+        self.assertEqual(q["auteur"], "Anne-Catherine Goffinet")
+        self.assertEqual(q["destinataire"], "Anne-Catherine Dalcq")
+        self.assertTrue(q["titre"][0].isupper())
         self.assertTrue(q["fonction"].startswith("Ministre"))
         self.assertEqual(q["date"], "2026-10-09")
         self.assertEqual(q["num"], "100 (2026-2027)")
@@ -70,6 +71,16 @@ class QuestionsEtDossiersWallonie(unittest.TestCase):
         self.assertEqual(wallonie.statut_dossier(etapes), "adopté")
         self.assertEqual(wallonie.statut_dossier(etapes[:5]), "en commission")
         self.assertEqual(wallonie.statut_dossier(etapes[:1]), "déposé")
+
+
+class Noms(unittest.TestCase):
+    def test_nom_lisible(self):
+        from common import nom_lisible, noms_lisibles
+        self.assertEqual(nom_lisible("GOFFINET Anne-Catherine"), "Anne-Catherine Goffinet")
+        self.assertEqual(nom_lisible("CASSART-MAILLEUX Caroline"), "Caroline Cassart-Mailleux")
+        self.assertEqual(nom_lisible("de WASSEIGE Olivier"), "Olivier de Wasseige")
+        self.assertEqual(nom_lisible("Nawal Ben Hamou"), "Nawal Ben Hamou")
+        self.assertEqual(noms_lisibles("DOLIMONT Adrien, JEHOLET Pierre-Yves"), "Adrien Dolimont, Pierre-Yves Jeholet")
 
 
 class Bruxelles(unittest.TestCase):

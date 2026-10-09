@@ -13,8 +13,8 @@ import shutil
 import subprocess
 import tempfile
 
-from common import (clean, date_fr, fetch, fetch_json, fold, log, name_key, read_json,
-                    cache_path, write_json, SITE)
+from common import (clean, date_fr, fetch, fetch_json, fold, log, name_key, nom_lisible, noms_lisibles,
+                    read_json, cache_path, write_json, SITE)
 
 BASE = "https://www.parlement-wallonie.be"
 OD = BASE + "/opendata"
@@ -80,16 +80,17 @@ def parse_questions(h, type_label):
         who = re.sub(r"^de\s+", "", who)
         auteur, _, dest = who.partition(" à ")
         ministre, _, fonction = dest.partition(",")
+        titre = clean(m.group("titre"))
         out.append({
             "id": f"wal-q-{m.group('iddoc')}",
             "parl": "wal",
             "type": type_label,
             "date": date_fr(m.group("date")),
-            "auteur": auteur.strip(),
-            "destinataire": ministre.strip(),
+            "auteur": noms_lisibles(auteur),
+            "destinataire": nom_lisible(ministre.strip()),
             "fonction": fonction.strip(),
             "num": num,
-            "titre": clean(m.group("titre")),
+            "titre": titre[:1].upper() + titre[1:],
             "mat": m.group("mat") or None,
             "url": f"{BASE}/pwpages?p=interp-questions-voir&type={m.group('type')}&iddoc={m.group('iddoc')}",
         })
@@ -153,7 +154,7 @@ def parse_dossier_detail(h):
         auteurs = ""
         ma = re.search(r'<span class="text-pw-lightblue">\s*de (.*?)</span>', head, re.S)
         if ma:
-            auteurs = clean(ma.group(1))
+            auteurs = noms_lisibles(clean(ma.group(1)))
             head = head[:ma.start()]
         lien = re.search(r'href="(http[^"]+\.pdf)"[^>]*>(.*?)</a>', m.group("rest"), re.S)
         etapes.append({
@@ -193,6 +194,8 @@ def dossiers(previous):
             etapes = old["etapes"]
         else:
             etapes = parse_dossier_detail(fetch(f"{BASE}/pwpages?p=doc-recherche-det&iddoc={d['iddoc']}"))
+        for e in etapes:  # aussi pour les chronologies reprises de l'exécution précédente
+            e["auteurs"] = noms_lisibles(e.get("auteurs", ""))
         commission = next((re.sub(r"^Envoi en ", "", e["libelle"]) for e in etapes
                            if fold(e["libelle"]).startswith("envoi en commission")), None)
         if not commission:
@@ -287,6 +290,11 @@ VOTE_MARK = re.compile(
     r"(?:(?P<non>\d+) membres? répond(?:ent)? non\.\s*)?"
     r"(?:(?P<abst>\d+) membres? s[’']abst\w+\.\s*)?"
     r"(?:En conséquence,(?P<res>.{0,250}?)\.)?")
+DECOMPTE = re.compile(
+    r"(?P<tot>\d+) membres? prenn?ent part au vote\.\s*"
+    r"(?:(?P<oui>\d+) membres? répond(?:ent)? oui\.\s*)?"
+    r"(?:(?P<non>\d+) membres? répond(?:ent)? non\.\s*)?"
+    r"(?:(?P<abst>\d+) membres? s[’']abst\w+\.\s*)?")
 OBJET = re.compile(r"(Nous (?:allons|passons|procédons)[^.]{0,40}?vot|Je mets aux voix|Je soumets au vote)", re.I)
 
 
@@ -357,6 +365,10 @@ def parse_votes(txt):
     """
     flow = _flow(txt)
     marks = list(VOTE_MARK.finditer(flow))
+    # les colonnes peuvent éloigner un décompte de son annonce ; chaque vote ayant un seul décompte,
+    # on les apparie dans l'ordre quand leurs nombres concordent
+    decomptes = list(DECOMPTE.finditer(flow))
+    apparies = len(decomptes) == len(marks)
     lists = _lists(flow)
     state = {"ptr": 0}
     votes, prev_end, prev_docs = [], 0, []
@@ -377,8 +389,9 @@ def parse_votes(txt):
         objet = objet[:700]
         prev_end = m.end()
 
-        tot = {k: int(m.group(k)) if m.group(k) else 0 for k in ("oui", "non", "abst")}
-        votants = int(m.group("tot")) if m.group("tot") else sum(tot.values())
+        c = decomptes[k] if apparies else m
+        tot = {x: int(c.group(x)) if c.group(x) else 0 for x in ("oui", "non", "abst")}
+        votants = int(c.group("tot")) if c.group("tot") else sum(tot.values())
         noms = _match_lists(lists, tot, state)
 
         # phrase de résultat : juste après les décomptes, sinon avant le vote suivant (après les listes)
@@ -431,7 +444,7 @@ def _pdftotext(raw):
 
 
 # à incrémenter quand parse_votes change : les comptes rendus déjà lus sont alors relus
-ANALYSEUR_VOTES = 3
+ANALYSEUR_VOTES = 4
 
 
 def votes():

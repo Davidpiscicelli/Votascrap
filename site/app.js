@@ -15,7 +15,7 @@
   const STORE_KEY = "pleniere.suivis";
 
   const D = { meta: null, dossiers: [], votes: [], deputes: [], syntheses: [], fwb: [], resumes: {}, prompts: null,
-    questions: null, recentes: [] };
+    questions: null, recentes: [], ministres: {} };
   const byId = { d: new Map(), v: new Map(), e: new Map() };
   const ui = { limit: {}, filters: {} };
   const view = document.getElementById("view");
@@ -30,12 +30,21 @@
     return `${+d} ${MOIS[+m - 1]} ${y}`;
   };
   const nf = (n) => Number(n || 0).toLocaleString("fr-BE");
+  const pl = (n, sing, plur) => `${nf(n)} ${n > 1 ? plur : sing}`;
   const themeLabel = (id) => (D.meta.themes.find((t) => t.id === id) || { label: id }).label;
   const parlBadge = (p, extra) => `<span class="parl ${esc(p)}">${esc(PARL[p] || p)}${extra ? " · " + esc(extra) : ""}</span>`;
   const statutPill = (s) => `<span class="pill ${ST_CLASS[s] || "st-depose"}">${esc(s)}</span>`;
   const radarMark = (x) => (x && x.radar ? `<span class="radar" title="${esc(D.meta.radar.description || "")}">Radar PME</span>` : "");
   const chips = (themes) => (themes && themes.length ? `<div class="chips">${themes.map((t) => `<span class="chip">${esc(themeLabel(t))}</span>`).join("")}</div>` : "");
   const partyColor = (p) => PARTY_COLORS[p] || "#8a94a0";
+  const WAL_QTYPE = { "Question écrite": 28, "Question orale": 30, "Question d'actualité": 29, "Interpellation": 31, "Question urgente": 165 };
+  function questionUrl(q) {
+    if (q.url) return q.url;
+    const n = String(q.id || "").split("-").pop();
+    if (q.parl === "wal") return `https://www.parlement-wallonie.be/pwpages?p=interp-questions-voir&type=${WAL_QTYPE[q.type] || 28}&iddoc=${n}`;
+    if (q.parl === "bxl") return `https://www.parlement.brussels/weblex-quest-det/?moncode=${n}&base=${q.assemblee === "ARCCC" ? 2 : 1}`;
+    return "#";
+  }
   const ext = (url, label) => (url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>` : "");
 
   function storeGet() {
@@ -125,8 +134,8 @@
     return `<div class="row">
       <div class="row-meta">${parlBadge(q.parl)}<span class="num">${fdate(q.date)}</span></div>
       <div class="row-main">
-        <a class="row-title" href="${esc(q.url || "#")}" target="_blank" rel="noopener">${esc(q.titre)}</a>
-        <span class="row-sub">${esc(q.type)}${q.num ? ` <span class="ref">n° ${esc(q.num)}</span>` : ""} · ${who}${q.parti ? " (" + esc(q.parti) + ")" : ""} → ${esc(q.destinataire || "")}</span>
+        <a class="row-title" href="${esc(questionUrl(q))}" target="_blank" rel="noopener">${esc(q.titre)}</a>
+        <span class="row-sub">${esc(q.type)}${q.num ? ` <span class="ref">n° ${esc(q.num)}</span>` : ""} · ${who}${q.parti ? " (" + esc(q.parti) + ")" : ""} → <span title="${esc(D.ministres[q.destinataire] || "")}">${esc(q.destinataire || "")}</span></span>
         ${chips(q.themes)}
       </div>
       <div class="row-side">${radarMark(q)}</div>
@@ -145,6 +154,9 @@
     const d = v.dossier && byId.d.get(v.dossier);
     if (d) return `${NATURES[v.nature] || "Vote"} — ${d.titre}`;
     let o = (v.objet || "").replace(/^Nous (allons|passons)( à présent)? (voter|au vote) sur /i, "");
+    // première phrase seulement (un point précédé d'une initiale « M. » ne termine pas la phrase)
+    const fin = o.search(/[^A-Z.\s]{3}\.\s+(?=[A-ZÀ-Ý])/);
+    if (fin > 30) o = o.slice(0, fin + 4);
     o = o.charAt(0).toUpperCase() + o.slice(1);
     return o.length > 220 ? o.slice(0, 217) + "…" : o;
   }
@@ -161,12 +173,18 @@
   }
 
   // ------------------------------------------------------------ accueil
-  function lastSynthese() { return D.syntheses[0]; }
+  function lastSynthese() {
+    // avant le 20 du mois, le mois en cours est trop partiel : on met en avant le précédent
+    const s = D.syntheses;
+    const today = new Date().toISOString().slice(0, 10);
+    if (s.length > 1 && s[0].mois === today.slice(0, 7) && +today.slice(8, 10) < 20) return s[1];
+    return s[0];
+  }
 
   function syntheseFeature(s, full) {
     if (!s) return "";
     const q = s.questions || {};
-    const fallback = `${nf((q.wal || 0) + (q.bxl || 0))} questions aux ministres (${nf(q.wal || 0)} en Wallonie, ${nf(q.bxl || 0)} à Bruxelles), ${s.dossiers_deposes.length} dossiers déposés, ${s.dossiers_adoptes.length} textes adoptés et ${s.votes} votes nominatifs en plénière wallonne.`;
+    const fallback = `${pl((q.wal || 0) + (q.bxl || 0), "question", "questions")} aux ministres (${nf(q.wal || 0)} en Wallonie, ${nf(q.bxl || 0)} à Bruxelles), ${pl(s.dossiers_deposes.length, "dossier déposé", "dossiers déposés")}, ${pl(s.dossiers_adoptes.length, "texte adopté", "textes adoptés")} et ${pl(s.votes, "vote nominatif", "votes nominatifs")} en plénière wallonne.`;
     const adoptes = s.dossiers_adoptes.map((id) => byId.d.get(id)).filter(Boolean);
     return `<section class="feature" aria-labelledby="syn-${s.mois}">
       <div class="block-head"><h2 id="syn-${s.mois}">${full ? "" : "Synthèse · "}${esc(s.libelle)}</h2>${full ? "" : '<a href="#syntheses">Toutes les synthèses</a>'}</div>
@@ -195,7 +213,7 @@
   function radarFeed(n) {
     const items = [];
     D.dossiers.filter((d) => d.radar).forEach((d) => items.push({ date: d.date_maj, html: `<div class="mini-item"><div class="mini-top">${parlBadge(d.parl)}<span>${fdate(d.date_maj)}</span>${statutPill(d.statut)}</div><a href="#d.${esc(d.id)}">${esc(d.titre)}</a></div>` }));
-    D.recentes.filter((q) => q.radar).forEach((q) => items.push({ date: q.date, html: `<div class="mini-item"><div class="mini-top">${parlBadge(q.parl)}<span>${fdate(q.date)}</span><span>${esc(q.type)} · ${esc(q.auteur)}</span></div><a href="${esc(q.url)}" target="_blank" rel="noopener">${esc(q.titre)}</a></div>` }));
+    D.recentes.filter((q) => q.radar).forEach((q) => items.push({ date: q.date, html: `<div class="mini-item"><div class="mini-top">${parlBadge(q.parl)}<span>${fdate(q.date)}</span><span>${esc(q.type)} · ${esc(q.auteur)}</span></div><a href="${esc(questionUrl(q))}" target="_blank" rel="noopener">${esc(q.titre)}</a></div>` }));
     items.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
     return items.slice(0, n).map((i) => i.html).join("");
   }
@@ -598,17 +616,18 @@
   }, true);
 
   async function start() {
-    const [meta, dossiers, votes, deputes, syntheses, fwb, resumes, prompts, recentes] = await Promise.all([
+    const [meta, dossiers, votes, deputes, syntheses, fwb, resumes, prompts, recentes, ministres] = await Promise.all([
       getJSON("meta.json", null), getJSON("dossiers.json", []), getJSON("votes.json", []), getJSON("deputes.json", []),
       getJSON("syntheses.json", []), getJSON("fwb.json", []), getJSON("resumes.json", {}), getJSON("prompts.json", null),
-      getJSON("questions-recentes.json", []),
+      getJSON("questions-recentes.json", []), getJSON("ministres.json", {}),
     ]);
     if (!meta) {
       view.innerHTML = '<div class="page-head"><h1>Données absentes</h1><p class="lede">Le dossier <span class="ref">data/</span> est vide. Lancez <span class="ref">python3 collect/build.py</span> puis rechargez la page.</p></div>';
       return;
     }
-    Object.assign(D, { meta, dossiers, votes, deputes, syntheses, fwb, resumes, prompts, recentes });
+    Object.assign(D, { meta, dossiers, votes, deputes, syntheses, fwb, resumes, prompts, recentes, ministres });
     D.dossiers.forEach((d) => { d._s = fold([d.titre, d.num, d.auteurs, d.commission].join(" ")); byId.d.set(d.id, d); });
+    D.votes = D.votes.filter((v) => v.pour + v.contre + v.abstention > 0);
     D.votes.forEach((v) => { v._s = fold([v.objet, (v.docs || []).join(" "), v.seance].join(" ")); byId.v.set(v.id, v); });
     D.deputes.forEach((e) => byId.e.set(e.id, e));
     document.getElementById("fresh").textContent = "Mis à jour le " + fdate(meta.genere_le) + " à " + meta.genere_le.slice(11, 16) + " UTC";

@@ -1,0 +1,129 @@
+{
+ "genere_le": "2026-10-09T11:52:58+00:00",
+ "site": {
+  "nom": "Plénière",
+  "sous_titre": "Veille parlementaire Wallonie · Bruxelles · Fédération Wallonie-Bruxelles",
+  "accroche": "Ce qui se décide dans les parlements, lisible en deux minutes."
+ },
+ "themes": [
+  {
+   "id": "emploi",
+   "label": "Emploi & marché du travail"
+  },
+  {
+   "id": "formation",
+   "label": "Formation & alternance"
+  },
+  {
+   "id": "pme",
+   "label": "PME, indépendants & commerce"
+  },
+  {
+   "id": "economie",
+   "label": "Économie, industrie & innovation"
+  },
+  {
+   "id": "fiscalite",
+   "label": "Fiscalité & budget"
+  },
+  {
+   "id": "simplification",
+   "label": "Simplification & marchés publics"
+  },
+  {
+   "id": "energie",
+   "label": "Énergie & climat"
+  },
+  {
+   "id": "mobilite",
+   "label": "Mobilité & infrastructures"
+  },
+  {
+   "id": "amenagement",
+   "label": "Aménagement du territoire"
+  },
+  {
+   "id": "logement",
+   "label": "Logement"
+  },
+  {
+   "id": "environnement",
+   "label": "Environnement & agriculture"
+  },
+  {
+   "id": "social",
+   "label": "Social, santé & familles"
+  },
+  {
+   "id": "pouvoirs_locaux",
+   "label": "Pouvoirs locaux & gouvernance"
+  },
+  {
+   "id": "enseignement",
+   "label": "Enseignement, culture & sport"
+  },
+  {
+   "id": "institutionnel",
+   "label": "Institutionnel & Europe"
+  }
+ ],
+ "radar": {
+  "label": "Radar PME & indépendants",
+  "description": "Éléments qui touchent directement les PME, indépendants, commerces et leurs opérateurs (emploi, formation, aides, simplification)."
+ },
+ "sources": {
+  "wallonie_thesaurus": {
+   "ok": true,
+   "maj": "2026-10-09T11:47:07+00:00",
+   "n": 363
+  },
+  "wallonie_deputes": {
+   "ok": true,
+   "maj": "2026-10-09T11:47:08+00:00",
+   "n": 75
+  },
+  "wallonie_questions": {
+   "ok": true,
+   "maj": "2026-10-09T11:47:24+00:00",
+   "n": 20268
+  },
+  "wallonie_dossiers": {
+   "ok": true,
+   "maj": "2026-10-09T11:47:29+00:00",
+   "n": 243
+  },
+  "wallonie_votes": {
+   "ok": true,
+   "maj": "2026-10-09T11:48:52+00:00",
+   "n": 523
+  },
+  "bruxelles_questions": {
+   "ok": true,
+   "maj": "2026-10-09T11:48:54+00:00",
+   "n": 7439
+  },
+  "bruxelles_dossiers": {
+   "ok": true,
+   "maj": "2026-10-09T11:52:41+00:00",
+   "n": 340
+  },
+  "fwb_documents": {
+   "ok": true,
+   "maj": "2026-10-09T11:52:43+00:00",
+   "n": 18
+  }
+ },
+ "compteurs": {
+  "questions": {
+   "wal": 20268,
+   "bxl": 7439
+  },
+  "dossiers": {
+   "wal": 243,
+   "bxl": 340
+  },
+  "votes": 523,
+  "deputes": 75,
+  "fwb": 18
+ }
+}
