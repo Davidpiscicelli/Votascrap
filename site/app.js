@@ -530,8 +530,7 @@
     const names = { wallonie_thesaurus: "Wallonie · thésaurus des matières", wallonie_deputes: "Wallonie · députés (open data)", wallonie_questions: "Wallonie · questions et interpellations",
       wallonie_dossiers: "Wallonie · dossiers législatifs", wallonie_votes: "Wallonie · votes nominatifs (comptes rendus)", bruxelles_questions: "Bruxelles · questions",
       bruxelles_dossiers: "Bruxelles · dossiers législatifs", fwb_documents: "FWB · derniers documents" };
-    const P = D.prompts || {};
-    view.innerHTML = `<div class="page-head"><h1>Méthode et transparence</h1><p class="lede">D'où viennent les données, comment elles sont mises à jour, et ce que fait l'IA.</p></div>
+    view.innerHTML = `<div class="page-head"><h1>Méthode et sources</h1><p class="lede">D'où viennent les données, comment elles sont mises à jour et comment elles sont classées. Le rôle de l'IA est décrit sur la page <a href="#transparence-ia">Transparence IA</a>.</p></div>
       <section class="block"><h2>Sources et fraîcheur</h2><div class="table-wrap"><table><thead><tr><th>Source</th><th>État</th><th class="n">Éléments</th><th>Dernière mise à jour</th></tr></thead><tbody>
         ${Object.entries(src).map(([k, s]) => `<tr><td>${esc(names[k] || k)}</td><td>${s.ok ? '<span class="status-ok">OK</span>' : `<span class="status-ko" title="${esc(s.erreur || "")}">En échec</span>`}</td><td class="n">${s.n == null ? "–" : nf(s.n)}</td><td>${s.maj ? fdate(s.maj) + " " + s.maj.slice(11, 16) + " UTC" : "–"}</td></tr>`).join("")}
       </tbody></table></div></section>
@@ -545,11 +544,152 @@
       <p>Chaque élément est classé par mots-clés de l'intitulé et, pour les questions écrites wallonnes, par la matière officielle attribuée par le Parlement. Le radar PME &amp; indépendants repère les éléments qui touchent directement les entreprises, l'emploi et la formation. Les listes de mots-clés sont modifiables dans <span class="ref">config/themes.json</span>.</p>
       <h2>Votes</h2>
       <p>Les votes sont lus dans les comptes rendus PDF. Une liste de noms n'est rattachée à un vote que si son effectif correspond exactement au décompte officiel ; sinon seuls les décomptes sont affichés. Un « vote contre la ligne » est un vote différent de la position majoritaire du groupe.</p>
-      <h2>Transparence IA</h2>
-      <p>Les résumés de dossiers et les synthèses mensuelles sont rédigés par ${esc(P.modele || "un modèle Claude d'Anthropic")}. Le modèle reçoit l'intitulé officiel, les étapes de la procédure et les ${nf(P.extrait_max || 15000)} premiers caractères du document déposé. Il ne voit pas le reste du document : un résumé peut donc manquer un élément du dispositif ou un amendement. Chaque résumé est daté et renvoie au texte officiel, qui fait foi. Les consignes complètes données au modèle sont reproduites ci-dessous.</p>
-      ${P.resume_dossier ? `<h3>Consigne · résumé de dossier</h3><pre class="prompt">${esc(P.resume_dossier)}</pre>` : ""}
-      ${P.synthese_mensuelle ? `<h3>Consigne · synthèse mensuelle</h3><pre class="prompt">${esc(P.synthese_mensuelle)}</pre>` : ""}
+      <h2>Mise à jour</h2>
+      <p>La collecte tourne chaque jour du lundi au samedi, tôt le matin. Chaque source est traitée séparément : si l'une est indisponible, ses données précédentes restent affichées et le tableau ci-dessus l'indique.</p>
       </section>`;
+  }
+
+  // ------------------------------------------------------------ pages d'information (pied de page)
+  function ed(key, label) {
+    const v = ((D.meta.site || {}).editeur || {})[key];
+    return v ? esc(v) : `<span class="todo">${esc(label)} à compléter (config/site.json → editeur.${key})</span>`;
+  }
+  function contactLine() {
+    const c = ((D.meta.site || {}).editeur || {}).contact;
+    return c ? `<b>${esc(c)}</b>` : ed("contact", "Adresse de contact");
+  }
+  function legalPage(title, lede, body) {
+    const d = (D.meta.site || {}).date_conditions;
+    view.innerHTML = `<div class="page-head"><h1>${esc(title)}</h1>${lede ? `<p class="lede">${lede}</p>` : ""}</div>
+      <article class="legal">${body}${d ? `<p class="updated">Dernière mise à jour de cette page : ${fdate(d)}.</p>` : ""}</article>`;
+  }
+  const siteName = () => esc((D.meta.site || {}).nom || "Plénière");
+
+  function renderAPropos() {
+    const c = D.meta.compteurs || {};
+    legalPage("À propos", `${siteName()} rend lisible l'activité des parlements francophones, sans jargon et en renvoyant toujours au texte officiel.`, `
+      <section><h2>Pourquoi ce site</h2>
+        <p>Chaque semaine, les parlements publient des dizaines de documents : propositions de décret, rapports de commission, questions aux ministres, comptes rendus de séance. Ils sont publics, mais dispersés et longs à lire. ${siteName()} les rassemble, les classe par thème et les résume, pour savoir en quelques minutes ce qui avance, ce qui est voté et qui pose quelles questions.</p></section>
+      <section><h2>Pour qui</h2>
+        <p>Dirigeants de PME, indépendants, fédérations professionnelles, opérateurs publics, journalistes et citoyens. Le <b>radar PME &amp; indépendants</b> met en avant ce qui touche directement les entreprises, l'emploi et la formation.</p></section>
+      <section><h2>Ce que vous y trouvez</h2><ul>
+        <li>${nf(((c.dossiers || {}).wal || 0) + ((c.dossiers || {}).bxl || 0))} dossiers législatifs avec leur avancement et leur chronologie complète ;</li>
+        <li>${nf(((c.questions || {}).wal || 0) + ((c.questions || {}).bxl || 0))} questions et interpellations adressées aux ministres ;</li>
+        <li>${nf(c.votes || 0)} votes nominatifs en séance plénière wallonne, avec le détail par élu et par groupe ;</li>
+        <li>l'activité des ${nf(c.deputes || 0)} députés wallons, des synthèses mensuelles et un flux d'abonnement.</li></ul></section>
+      <section><h2>Indépendance</h2>
+        <p>${siteName()} est un site indépendant. Il n'est lié à aucune des assemblées dont il présente les travaux et ne prend pas position sur le fond des débats. Le classement par thème repose sur des règles publiques, décrites dans <a href="#methode">Méthode et sources</a>.</p></section>
+      <section><h2>Qui publie ce site</h2><dl>
+        <dt>Éditeur</dt><dd>${ed("nom", "Nom de l'éditeur")}</dd>
+        <dt>Contact</dt><dd>${contactLine()}</dd></dl>
+        <p>Une erreur, un oubli, une source à ajouter ? Écrivez-nous en indiquant le lien de la page concernée.</p></section>`);
+  }
+
+  function renderTransparenceIA() {
+    const P = D.prompts || {};
+    const ia = D.meta.ia || {};
+    const resumes = Object.values(D.resumes || {});
+    const last = resumes.map((r) => r.genere_le || "").sort().pop();
+    const nSyn = D.syntheses.filter((s) => s.texte_ia).length;
+    legalPage("Transparence IA", "Ce que l'intelligence artificielle fait sur ce site, ce qu'elle ne fait pas, et les consignes exactes qu'elle reçoit.", `
+      <section><h2>Ce que fait l'IA</h2><ul>
+        <li><b>Résumés de dossiers en langage clair</b> : « En bref », résumé, effets possibles pour les entreprises, points d'attention et publics concernés.</li>
+        <li><b>Texte des synthèses mensuelles</b>, rédigé à partir des chiffres du mois calculés par le site.</li></ul>
+        <p>Chaque contenu produit par l'IA est signalé sur la page où il apparaît, avec le nom du modèle et la date de rédaction.</p></section>
+      <section><h2>Ce que l'IA ne fait pas</h2><ul>
+        <li>Elle ne collecte pas les données : elles viennent directement des sites et données ouvertes des parlements.</li>
+        <li>Elle ne classe pas les éléments par thème et ne décide pas de ce qui entre dans le radar : ce classement suit des listes de mots-clés publiques.</li>
+        <li>Elle ne lit pas les votes : décomptes et positions sont extraits des comptes rendus par des règles fixes, vérifiées contre les décomptes officiels.</li>
+        <li>Elle ne détermine pas le statut d'un dossier, qui vient de sa chronologie officielle.</li>
+        <li>Il n'y a pas d'assistant conversationnel sur ce site.</li></ul></section>
+      <section><h2>Modèle et fournisseur</h2><dl>
+        <dt>Modèle</dt><dd>${esc(P.modele || ia.modele || "Claude")} (Anthropic)</dd>
+        <dt>Repli</dt><dd>Si un filtre de sécurité du fournisseur décline une demande, celle-ci est relancée automatiquement sur un autre modèle du même fournisseur. En cas de nouveau refus, le dossier reste sans résumé.</dd>
+        <dt>Volume</dt><dd>Au plus ${nf(ia.max_resumes_par_execution || 40)} résumés par mise à jour, en commençant par les dossiers du radar. Un résumé n'est refait que si le dossier a avancé.</dd>
+        <dt>Résumés disponibles</dt><dd>${nf(resumes.length)} dossier${resumes.length > 1 ? "s" : ""}${last ? ` · dernier rédigé le ${fdate(last)}` : ""} ; ${nf(nSyn)} synthèse${nSyn > 1 ? "s" : ""} mensuelle${nSyn > 1 ? "s" : ""}</dd></dl></section>
+      <section><h2>Ce que le modèle reçoit</h2>
+        <p>Pour un dossier : l'intitulé officiel, le type, le numéro, les auteurs, le statut, les étapes de la procédure et les ${nf(P.extrait_max || 15000)} premiers caractères du document déposé (en général l'exposé des motifs et le début du dispositif). Pour une synthèse : les chiffres du mois et les intitulés des dossiers déposés et adoptés.</p>
+        <p>Ce sont uniquement des documents parlementaires publics. Aucune donnée sur les visiteurs du site n'est transmise.</p></section>
+      <section><h2>Limites</h2><ul>
+        <li>Le modèle ne voit qu'un extrait : un résumé peut manquer un article, un amendement ou une modification adoptée plus tard.</li>
+        <li>Les résumés ne sont pas relus un par un avant publication.</li>
+        <li>La rubrique « Pour les entreprises » décrit des effets possibles, pas une analyse juridique.</li>
+        <li>Le texte officiel fait toujours foi ; chaque fiche y renvoie.</li></ul>
+        <p>Vous repérez une erreur ? Signalez-la à ${contactLine()} avec le lien de la fiche : le résumé sera corrigé ou retiré.</p></section>
+      <section><h2>Consignes données au modèle</h2>
+        <p>Elles sont reproduites intégralement. Seules les données du dossier ou du mois concerné s'y ajoutent.</p>
+        ${P.resume_dossier ? `<h3>Résumé de dossier</h3><pre class="prompt">${esc(P.resume_dossier)}</pre>` : ""}
+        ${P.synthese_mensuelle ? `<h3>Synthèse mensuelle</h3><pre class="prompt">${esc(P.synthese_mensuelle)}</pre>` : ""}</section>`);
+  }
+
+  function renderMentions() {
+    const s = D.meta.site || {};
+    legalPage("Mentions légales", "", `
+      <section><h2>Éditeur du site</h2><dl>
+        <dt>Nom</dt><dd>${ed("nom", "Nom de l'éditeur")}</dd>
+        <dt>Statut</dt><dd>${ed("statut", "Statut (personne physique, ASBL, entreprise…)")}</dd>
+        <dt>Adresse</dt><dd>${ed("adresse", "Adresse")}</dd>
+        <dt>Numéro d'entreprise</dt><dd>${ed("bce", "Numéro BCE (le cas échéant)")}</dd>
+        <dt>Responsable de la publication</dt><dd>${ed("responsable_publication", "Responsable de la publication")}</dd>
+        <dt>Contact</dt><dd>${contactLine()}</dd></dl></section>
+      <section><h2>Hébergement</h2><p>${esc(s.hebergeur || "Hébergeur à compléter")}</p></section>
+      <section><h2>Nature du site</h2>
+        <p>${siteName()} est un service d'information indépendant. Il n'est pas un site officiel et n'est lié à aucune des assemblées dont il présente les travaux. Les documents officiels publiés par ces assemblées font seuls foi.</p></section>
+      <section><h2>Données reprises et droits</h2><ul>
+        <li><b>Parlement de Wallonie</b> : données ouvertes réutilisées conformément au décret conjoint de la Région wallonne et de la Communauté française du 12 juillet 2017 relatif à la réutilisation des informations du secteur public. Source citée sur chaque fiche ; date de dernière mise à jour affichée en tête de site.</li>
+        <li><b>Parlement de la Région de Bruxelles-Capitale</b> et <b>Parlement de la Fédération Wallonie-Bruxelles</b> : documents publics, cités avec lien vers la source.</li>
+        <li>Comme le rappelle le Parlement de Wallonie, les discours prononcés dans les assemblées délibérantes et les actes qui y sont produits ne donnent pas lieu au droit d'auteur.</li>
+        <li>Les photos des députés proviennent du site du Parlement de Wallonie et restent sa propriété.</li>
+        <li>Les résumés, synthèses, classements et la présentation du site sont propres à ${siteName()}.</li></ul></section>
+      <section><h2>Responsabilité</h2>
+        <p>Les informations sont collectées et mises en forme automatiquement, chaque jour. Malgré le soin apporté, des erreurs, retards ou omissions sont possibles. ${siteName()} ne peut être tenu responsable d'une décision prise sur la seule base de ses contenus. Pour toute démarche, référez-vous au document officiel.</p></section>`);
+  }
+
+  function renderConditions() {
+    legalPage("Conditions d'utilisation", "", `
+      <section><h2>1. Objet</h2><p>Ces conditions encadrent l'utilisation de ${siteName()}, service gratuit de veille sur l'activité des parlements de Wallonie, de Bruxelles et de la Fédération Wallonie-Bruxelles. Consulter le site vaut acceptation de ces conditions.</p></section>
+      <section><h2>2. Accès</h2><p>Le site est accessible gratuitement, sans inscription. L'éditeur peut interrompre ou modifier le service, notamment pour maintenance ou si une source change, sans préavis.</p></section>
+      <section><h2>3. Nature des contenus</h2><p>Les contenus sont fournis à titre d'information générale. Ils ne constituent ni un avis juridique ni une interprétation officielle des textes. Le statut d'un dossier, le résultat d'un vote ou un résumé peuvent comporter des erreurs, en particulier :</p><ul>
+        <li>les votes lus automatiquement dans des comptes rendus en PDF, dont le résultat est parfois déduit des décomptes (la fiche le signale) ;</li>
+        <li>le classement par thème et le radar, établis par mots-clés ;</li>
+        <li>les résumés rédigés par IA, décrits sur la page <a href="#transparence-ia">Transparence IA</a>.</li></ul><p>Le document officiel fait toujours foi.</p></section>
+      <section><h2>4. Réutilisation</h2><p>Les données des parlements restent soumises aux conditions de leurs producteurs. Les synthèses et résumés propres au site peuvent être cités et réutilisés, à condition de mentionner « ${siteName()} », la date de consultation et le lien de la page.</p></section>
+      <section><h2>5. Liens externes</h2><p>Le site renvoie vers les sites officiels des assemblées. L'éditeur n'est pas responsable de leur contenu ni de leur disponibilité.</p></section>
+      <section><h2>6. Fonction « Suivre »</h2><p>Les dossiers et élus suivis sont mémorisés dans votre navigateur uniquement (voir <a href="#confidentialite">Confidentialité</a>). Ils peuvent être perdus si vous videz les données du navigateur ou changez d'appareil.</p></section>
+      <section><h2>7. Modification des conditions</h2><p>Ces conditions peuvent évoluer. La date de dernière mise à jour figure en bas de page.</p></section>
+      <section><h2>8. Droit applicable</h2><p>Ces conditions sont régies par le droit belge.</p></section>`);
+  }
+
+  function renderConfidentialite() {
+    legalPage("Confidentialité", "Ce site ne demande aucune donnée personnelle à ses visiteurs et ne les suit pas.", `
+      <section><h2>Données des visiteurs</h2><ul>
+        <li>Pas de compte, pas de formulaire, pas de lettre d'information : l'éditeur ne collecte aucune donnée sur vous.</li>
+        <li><b>Mes suivis</b> : la liste des dossiers et élus que vous suivez est enregistrée dans le stockage local de votre navigateur. Elle n'est jamais transmise à l'éditeur ni à un tiers. Vous pouvez l'effacer en retirant vos suivis ou en vidant les données du site dans votre navigateur.</li>
+        <li><b>Hébergement</b> : comme tout hébergeur, ${esc(((D.meta.site || {}).hebergeur || "l'hébergeur").split("—")[0].trim())} enregistre des journaux techniques (dont l'adresse IP) pour assurer la sécurité du service, selon sa propre politique de confidentialité.</li>
+        <li><b>Polices de caractères</b> : elles sont chargées depuis Google Fonts. Votre navigateur transmet donc votre adresse IP à Google lors de ce chargement ; aucun cookie n'est déposé.</li>
+        <li>Aucune mesure d'audience n'est installée (voir <a href="#mesure-audience">Mesure d'audience</a>).</li></ul></section>
+      <section><h2>Données publiées sur le site</h2>
+        <p>Le site affiche les noms, groupes politiques, circonscriptions, photos officielles et l'activité parlementaire (questions, votes, dépôts) des élus, ainsi que les noms des ministres destinataires des questions. Ces informations proviennent des publications officielles des assemblées. Elles sont traitées pour informer le public sur l'activité parlementaire.</p>
+        <p>Si vous constatez une erreur de rattachement (une question ou un vote attribué à la mauvaise personne, par exemple), écrivez à ${contactLine()} : elle sera corrigée.</p></section>
+      <section><h2>Intelligence artificielle</h2><p>Seuls des documents parlementaires publics sont transmis au fournisseur d'IA pour rédiger les résumés. Aucune donnée de visiteur ne l'est.</p></section>
+      <section><h2>Vos droits</h2><p>Vous disposez des droits d'accès, de rectification, d'effacement, de limitation et d'opposition prévus par le RGPD. Pour les exercer : ${contactLine()}. Vous pouvez aussi introduire une réclamation auprès de l'Autorité de protection des données (autoriteprotectiondonnees.be).</p></section>`);
+  }
+
+  function renderCookies() {
+    legalPage("Cookies", "Ce site ne dépose aucun cookie.", `
+      <section><h2>Ce qui est enregistré sur votre appareil</h2>
+        <div class="table-wrap"><table><thead><tr><th>Nom</th><th>Type</th><th>Finalité</th><th>Durée</th></tr></thead><tbody>
+          <tr><td class="mono">pleniere.suivis</td><td>Stockage local du navigateur</td><td>Mémoriser les dossiers et élus que vous suivez (fonction « Suivre »)</td><td>Jusqu'à ce que vous le supprimiez</td></tr>
+        </tbody></table></div>
+        <p>Cet enregistrement n'existe que si vous utilisez la fonction « Suivre ». Il sert uniquement au service que vous demandez, n'est pas lu par l'éditeur et ne sert à aucun suivi.</p></section>
+      <section><h2>Cookies tiers</h2><p>Aucun. Le site n'utilise ni publicité, ni réseau social intégré, ni outil de mesure d'audience. C'est pourquoi il n'affiche pas de bandeau de consentement.</p></section>
+      <section><h2>Effacer ces données</h2><p>Retirez vos suivis depuis la page <a href="#suivis">Mes suivis</a>, ou effacez les données de ce site dans les réglages de votre navigateur.</p></section>`);
+  }
+
+  function renderAudience() {
+    legalPage("Mesure d'audience", "Aucun outil de mesure d'audience n'est installé sur ce site.", `
+      <section><h2>Situation actuelle</h2><p>${siteName()} ne compte pas ses visiteurs et n'analyse pas leur navigation : aucun script de statistiques, aucun pixel, aucun cookie de mesure.</p></section>
+      <section><h2>Si cela change</h2><p>Si une mesure d'audience devient utile, elle sera choisie sans cookie et sans donnée personnelle (statistiques agrégées uniquement), et décrite sur cette page avant sa mise en service.</p></section>`);
   }
 
   function notFound() {
@@ -601,10 +741,13 @@
     const id = rest.join(".");
     const section = { d: "dossiers", v: "votes", e: "elus" }[kind] || kind;
     document.querySelectorAll("#nav a").forEach((a) => { if (a.dataset.r === section) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    document.querySelectorAll(".foot-links a").forEach((a) => { if (a.getAttribute("href") === "#" + kind) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
     const y = window.scrollY;
     if (!keepScroll) lastFocus = null;
     const r = { accueil: renderHome, dossiers: renderDossiers, questions: renderQuestions, votes: renderVotes, elus: renderElus,
-      syntheses: renderSyntheses, fwb: renderFwb, suivis: renderSuivis, methode: renderMethode }[kind];
+      syntheses: renderSyntheses, fwb: renderFwb, suivis: renderSuivis, methode: renderMethode,
+      "a-propos": renderAPropos, "transparence-ia": renderTransparenceIA, "mentions-legales": renderMentions,
+      conditions: renderConditions, confidentialite: renderConfidentialite, cookies: renderCookies, "mesure-audience": renderAudience }[kind];
     const done = () => { if (keepScroll) window.scrollTo(0, y); else window.scrollTo(0, 0); };
     if (kind === "d") { renderDossier(id); done(); } else if (kind === "v") { renderVote(id); done(); } else if (kind === "e") { renderElu(id).then(done); } else if (r) { const p = r(); if (p && p.then) p.then(done); else done(); } else { renderHome(); done(); }
   }
@@ -631,6 +774,9 @@
     D.votes.forEach((v) => { v._s = fold([v.objet, (v.docs || []).join(" "), v.seance].join(" ")); byId.v.set(v.id, v); });
     D.deputes.forEach((e) => byId.e.set(e.id, e));
     document.getElementById("fresh").textContent = "Mis à jour le " + fdate(meta.genere_le) + " à " + meta.genere_le.slice(11, 16) + " UTC";
+    document.getElementById("annee").textContent = meta.genere_le.slice(0, 4);
+    document.getElementById("foot-nom").textContent = (meta.site && meta.site.nom) || "Plénière";
+    document.title = (meta.site && meta.site.nom) || document.title;
     window.addEventListener("hashchange", () => route(false));
     route(false);
   }

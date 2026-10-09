@@ -3,7 +3,19 @@
  "site": {
   "nom": "Plénière",
   "sous_titre": "Veille parlementaire Wallonie · Bruxelles · Fédération Wallonie-Bruxelles",
-  "accroche": "Ce qui se décide dans les parlements, lisible en deux minutes."
+  "accroche": "Ce qui se décide dans les parlements, lisible en deux minutes.",
+  "url_publique": "https://davidpiscicelli.github.io/votascrap/",
+  "editeur": {
+   "_aide": "Affiché dans les pages Mentions légales, À propos et Confidentialité. Laisser vide un champ inconnu : la page indique alors « à compléter ».",
+   "nom": "",
+   "statut": "",
+   "adresse": "",
+   "bce": "",
+   "responsable_publication": "",
+   "contact": ""
+  },
+  "hebergeur": "GitHub Pages — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis",
+  "date_conditions": "2026-10-09"
  },
  "themes": [
   {
@@ -125,5 +137,9 @@
   "votes": 523,
   "deputes": 75,
   "fwb": 18
+ },
+ "ia": {
+  "modele": "claude-opus-5-5",
+  "max_resumes_par_execution": 40
  }
 }

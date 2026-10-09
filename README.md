@@ -15,7 +15,8 @@ Le fonctionnement s'inspire de Votalis (votalis.be), mais le projet est **recons
 | Élus | Les 75 députés wallons : questions posées, votes relevés, votes contre la ligne ; tableau de cohésion des groupes |
 | Synthèses | Un bilan chiffré par mois, avec un texte rédigé par IA si la clé est configurée |
 | Mes suivis | Dossiers et élus suivis, mémorisés dans le navigateur |
-| Méthode | Sources, fraîcheur de chaque source, règles de classement, consignes complètes données à l'IA |
+| Méthode et sources | Sources, fraîcheur de chaque source, règles de classement et d'extraction des votes |
+| Pied de page | À propos, Transparence IA (rôle de l'IA, limites, consignes intégrales), Mentions légales, Conditions d'utilisation, Confidentialité, Cookies, Mesure d'audience, flux du radar |
 
 Un flux Atom du radar (`site/data/flux-radar.xml`) permet de recevoir les nouveautés dans Outlook ou un lecteur de flux.
 
@@ -45,6 +46,7 @@ Mise en place, une seule fois :
 1. **Settings → Pages → Build and deployment → Source : GitHub Actions.** GitHub Pages est gratuit pour un dépôt public. Pour un dépôt privé, il faut un compte GitHub Pro, ou bien publier `site/` sur Netlify (voir plus bas).
 2. *(Facultatif)* **Settings → Secrets and variables → Actions → New repository secret** : `ANTHROPIC_API_KEY` = votre clé API Anthropic. Sans elle, le site fonctionne sans résumés IA.
 3. Renseigner l'adresse publique du site dans `config/site.json` (`url_publique`), pour que les liens du flux Atom pointent au bon endroit.
+4. Compléter le bloc `editeur` de `config/site.json`. Tant qu'un champ est vide, les pages Mentions légales et À propos affichent « à compléter » en rouge.
 
 Le planning ne s'exécute que sur la branche par défaut du dépôt.
 
@@ -66,7 +68,7 @@ Chaque source est indépendante. Si l'une tombe en panne, les données précéde
 | Fichier | À quoi il sert |
 |---|---|
 | `config/themes.json` | Thèmes et **radar PME** : listes de mots-clés (accents ignorés, `*` en fin de mot = préfixe), matières officielles wallonnes associées |
-| `config/site.json` | Nom du site, législatures suivies, types de questions, délai entre deux requêtes, modèle IA et plafond de résumés par exécution |
+| `config/site.json` | Nom du site, **éditeur** (nom, statut, adresse, BCE, responsable, contact : affichés dans les mentions légales), hébergeur, législatures suivies, types de questions, délai entre deux requêtes, modèle IA et plafond de résumés par exécution |
 | `prompts/resume_dossier.md` | Consigne donnée à l'IA pour résumer un dossier (publiée telle quelle sur la page Méthode) |
 | `prompts/synthese_mensuelle.md` | Consigne pour la synthèse du mois |
 

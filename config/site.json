@@ -3,6 +3,17 @@
   "sous_titre": "Veille parlementaire Wallonie · Bruxelles · Fédération Wallonie-Bruxelles",
   "accroche": "Ce qui se décide dans les parlements, lisible en deux minutes.",
   "url_publique": "https://davidpiscicelli.github.io/votascrap/",
+  "editeur": {
+    "_aide": "Affiché dans les pages Mentions légales, À propos et Confidentialité. Laisser vide un champ inconnu : la page indique alors « à compléter ».",
+    "nom": "",
+    "statut": "",
+    "adresse": "",
+    "bce": "",
+    "responsable_publication": "",
+    "contact": ""
+  },
+  "hebergeur": "GitHub Pages — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis",
+  "date_conditions": "2026-10-09",
   "user_agent": "veille-parlementaire/1.0 (veille non commerciale; donnees ouvertes; contact via depot GitHub)",
   "delai_entre_requetes": 0.6,
   "wallonie": {

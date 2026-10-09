@@ -272,7 +272,9 @@ def main():
     themes_cfg = load_config("themes.json")
     meta = {
         "genere_le": now_iso(),
-        "site": {k: SITE[k] for k in ("nom", "sous_titre", "accroche")},
+        "site": {k: SITE.get(k) for k in ("nom", "sous_titre", "accroche", "url_publique", "editeur", "hebergeur",
+                                         "date_conditions")},
+        "ia": {"modele": SITE["ia"]["modele"], "max_resumes_par_execution": SITE["ia"]["max_resumes_par_execution"]},
         "themes": [{"id": t, "label": l} for t, l in labels.items()],
         "radar": {k: themes_cfg.get("radar", {}).get(k) for k in ("label", "description")},
         "sources": st.sources,
