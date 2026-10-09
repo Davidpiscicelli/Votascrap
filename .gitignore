@@ -1,0 +1,6 @@
+# Régénérés entièrement à chaque collecte (plusieurs Mo) : inutile de les versionner chaque jour
+site/data/questions.json
+site/data/questions-recentes.json
+*.tmp
+__pycache__/
+.venv/

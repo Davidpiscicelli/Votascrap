@@ -1,0 +1,35 @@
+{
+  "nom": "Plénière",
+  "sous_titre": "Veille parlementaire Wallonie · Bruxelles · Fédération Wallonie-Bruxelles",
+  "accroche": "Ce qui se décide dans les parlements, lisible en deux minutes.",
+  "url_publique": "https://davidpiscicelli.github.io/votascrap/",
+  "user_agent": "veille-parlementaire/1.0 (veille non commerciale; donnees ouvertes; contact via depot GitHub)",
+  "delai_entre_requetes": 0.6,
+  "wallonie": {
+    "actif": true,
+    "legislature_id": 12,
+    "legislature": "2024-2029",
+    "types_questions": {
+      "28": "Question écrite",
+      "30": "Question orale",
+      "29": "Question d'actualité",
+      "31": "Interpellation",
+      "165": "Question urgente"
+    },
+    "date_min_questions": "2024-07-01",
+    "votes_depuis_session": "2024-2025"
+  },
+  "bruxelles": {
+    "actif": true,
+    "legislature": "24-29"
+  },
+  "fwb": {
+    "actif": true
+  },
+  "ia": {
+    "modele": "claude-opus-5-5",
+    "effort": "medium",
+    "max_resumes_par_execution": 40,
+    "max_questions_detaillees_par_execution": 150
+  }
+}

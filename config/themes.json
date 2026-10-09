@@ -1,0 +1,102 @@
+{
+  "_aide": "Mots-clés écrits librement (accents et majuscules ignorés). Un * final = préfixe (entreprise* couvre entreprises, entrepreneur...). 'wal_mat' = identifiants de matières du Parlement de Wallonie, 'wal_cat' = rubriques entières de son thésaurus.",
+  "themes": [
+    {
+      "id": "emploi",
+      "label": "Emploi & marché du travail",
+      "keywords": ["emploi*", "chomage", "chomeur*", "demandeur* d'emploi", "forem", "actiris", "aides a l'emploi", "aide a l'emploi", "ape", "impulsion", "titres-services", "titre-service", "activa", "insertion socioprofessionnelle", "mise a l'emploi", "penurie", "metier* en penurie", "fonction* critique*", "licenciement*", "contrat d'insertion", "sine", "article 60", "pfi", "plan formation-insertion", "recrutement", "marche du travail", "travailleur*", "economie sociale", "eta", "entreprise* de travail adapte"],
+      "wal_mat": [131, 51, 251]
+    },
+    {
+      "id": "formation",
+      "label": "Formation & alternance",
+      "keywords": ["formation*", "alternance", "ifapme", "efp", "sfpme", "apprentissage", "apprenti*", "enseignement qualifiant", "cefa", "competence*", "bruxelles formation", "cheque*-formation", "conge-education", "conge education", "validation des competences", "reconversion", "reskilling", "upskilling"],
+      "wal_mat": [132]
+    },
+    {
+      "id": "pme",
+      "label": "PME, indépendants & commerce",
+      "keywords": ["pme", "tpe", "independant*", "entrepreneur*", "entreprise*", "starter*", "creation d'entreprise*", "commerce*", "commercant*", "horeca", "restaurat*", "artisan*", "faillite*", "transmission d'entreprise*", "cheque*-entreprise*", "sowalfin", "wallonie entreprendre", "hub.brussels", "finance.brussels", "guichet d'entreprise*", "profession* liberale*", "zone* d'activite* economique*", "zoning*", "classes moyennes", "petites et moyennes entreprises"],
+      "wal_mat": [97, 74, 111, 261, 192]
+    },
+    {
+      "id": "economie",
+      "label": "Économie, industrie & innovation",
+      "keywords": ["economi*", "industri*", "innovation", "recherche", "investissement*", "plan de relance", "export*", "awex", "pole* de competitivite", "cluster*", "numerique", "digital*", "start-up*", "startup*", "sidérurgie", "siderurgi*", "reindustrialisation"],
+      "wal_mat": [15, 76, 78, 79, 80, 82, 96, 98, 99, 101, 247, 370, 75, 95]
+    },
+    {
+      "id": "fiscalite",
+      "label": "Fiscalité & budget",
+      "keywords": ["fiscal*", "impot*", "taxe*", "precompte*", "droits d'enregistrement", "droits de succession", "budget*", "budgetaire*", "ajustement*", "dette", "cour des comptes", "finances", "deficit", "trajectoire budgetaire"],
+      "wal_mat": [23, 24, 25, 21, 207, 271],
+      "wal_cat": ["Budget"]
+    },
+    {
+      "id": "simplification",
+      "label": "Simplification & marchés publics",
+      "keywords": ["simplification", "charge* administrative*", "lourdeur* administrative*", "marche* public*", "delais de paiement", "delai de paiement", "e-gouvernement", "guichet unique", "only once", "administration numerique"],
+      "wal_mat": [264, 241, 238]
+    },
+    {
+      "id": "energie",
+      "label": "Énergie & climat",
+      "keywords": ["energ*", "electricite", "gaz", "renouvelable*", "photovolta*", "eolien*", "climat*", "cwape", "brugel", "renovation energetique", "isolation", "pompe* a chaleur", "carbone", "co2", "tarif* de reseau", "tarif* reseau", "prosumer"],
+      "wal_cat": ["Politique de l’énergie"]
+    },
+    {
+      "id": "mobilite",
+      "label": "Mobilité & infrastructures",
+      "keywords": ["mobilite", "transport*", "tec", "stib", "sncb", "route*", "routier*", "autoroute*", "vignette", "peage*", "velo*", "ravel", "aeroport*", "port autonome", "chantier*", "lez", "low emission zone", "zone* de basse* emission*", "voiture*", "stationnement", "taxi*", "infrastructure*"],
+      "wal_cat": ["Transports - Mobilité", "Travaux publics"]
+    },
+    {
+      "id": "amenagement",
+      "label": "Aménagement du territoire",
+      "keywords": ["amenagement du territoire", "urbanisme", "permis", "codt", "cobat", "plan de secteur", "artificialisation", "stop beton", "site* a reamenager", "sar", "lotissement*", "patrimoine"],
+      "wal_cat": ["Urbanisme et Aménagement du territoire"]
+    },
+    {
+      "id": "logement",
+      "label": "Logement",
+      "keywords": ["logement*", "loyer*", "bail", "baux", "locataire*", "proprietaire*", "renovation", "habitat", "sans-abri*", "sans abri*", "sisp", "slrb", "colocation", "coliving", "kot*"],
+      "wal_cat": ["Logement"]
+    },
+    {
+      "id": "environnement",
+      "label": "Environnement & agriculture",
+      "keywords": ["environnement*", "dechet*", "pollution*", "eau", "inondation*", "agricult*", "agriculteur*", "nature", "foret*", "chasse", "biodiversite", "pesticide*", "bien-etre animal", "animaux", "parc national", "parc naturel", "secheresse", "proprete"],
+      "wal_cat": ["Environnement", "Politique de l’eau", "Rénovation rurale et Conservation de la nature", "Bien-être animal"]
+    },
+    {
+      "id": "social",
+      "label": "Social, santé & familles",
+      "keywords": ["sant*", "hopita*", "maison* de repos", "aviq", "iriscare", "handicap*", "pauvrete", "precarite", "cpas", "allocations familiales", "petite enfance", "creche*", "aide sociale", "sans-abrisme", "egalite*", "personnes agees", "aines", "soins", "violence*"],
+      "wal_cat": ["Affaires sociales"]
+    },
+    {
+      "id": "pouvoirs_locaux",
+      "label": "Pouvoirs locaux & gouvernance",
+      "keywords": ["commune*", "communa*", "province*", "provincia*", "intercommunale*", "tutelle", "gouvernance", "mandataire*", "zone* de police", "pompier*", "bourgmestre*", "elections communales"],
+      "wal_cat": ["Pouvoirs locaux", "Administration régionale - Fonction publique régionale", "Pararégionaux - Organismes d’intérêt public - Conseils consultatifs"]
+    },
+    {
+      "id": "enseignement",
+      "label": "Enseignement, culture & sport",
+      "keywords": ["enseignement*", "ecole*", "eleve*", "enseignant*", "professeur*", "universit*", "haute* ecole*", "etudiant*", "culture*", "culturel*", "jeunesse", "sport*", "media*", "rtbf", "one", "pacte d'excellence", "rythmes scolaires"]
+    },
+    {
+      "id": "institutionnel",
+      "label": "Institutionnel & Europe",
+      "keywords": ["reglement du parlement", "europe*", "union europeenne", "directive*", "accord de cooperation", "assentiment", "traite*", "reforme de l'etat", "competences", "relations internationales"],
+      "wal_cat": ["Parlement de Wallonie", "Gouvernement wallon", "Relations extérieures", "Déclaration de Politique régionale"]
+    }
+  ],
+  "radar": {
+    "id": "radar",
+    "label": "Radar PME & indépendants",
+    "description": "Éléments qui touchent directement les PME, indépendants, commerces et leurs opérateurs (emploi, formation, aides, simplification).",
+    "keywords": ["pme", "tpe", "independant*", "entrepreneur*", "commerce*", "commercant*", "horeca", "artisan*", "faillite*", "starter*", "creation d'entreprise*", "transmission d'entreprise*", "cheque*-entreprise*", "sowalfin", "wallonie entreprendre", "hub.brussels", "finance.brussels", "aide* aux entreprises", "aide* a l'emploi", "ifapme", "efp", "sfpme", "alternance", "forem", "actiris", "ape", "impulsion", "titres-services", "titre-service", "simplification administrative", "charge* administrative*", "delai* de paiement", "marche* public*", "guichet* d'entreprise*", "zone* d'activite* economique*", "ucm", "classes moyennes", "uwe", "beci", "cese wallonie", "brupartners", "petites et moyennes entreprises", "metier* en penurie", "fonction* critique*"],
+    "wal_mat": [97, 74, 264, 131, 132]
+  }
+}

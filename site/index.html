@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plénière</title>
+<meta name="description" content="Veille parlementaire Wallonie, Bruxelles et Fédération Wallonie-Bruxelles : dossiers, questions, votes et élus, en langage clair.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="alternate" type="application/atom+xml" title="Radar PME & indépendants" href="data/flux-radar.xml">
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <a class="brand" href="#accueil" aria-label="Plénière, accueil">
+      <svg class="brand-mark" viewBox="0 0 40 22" aria-hidden="true"><path d="M2 20a18 18 0 0 1 36 0" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M9 20a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" opacity=".55"/><circle cx="20" cy="19" r="2.6" fill="currentColor"/></svg>
+      <span class="brand-name">Plénière</span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Sections">
+      <a href="#accueil" data-r="accueil">Accueil</a>
+      <a href="#dossiers" data-r="dossiers">Dossiers</a>
+      <a href="#questions" data-r="questions">Questions</a>
+      <a href="#votes" data-r="votes">Votes</a>
+      <a href="#elus" data-r="elus">Élus</a>
+      <a href="#syntheses" data-r="syntheses">Synthèses</a>
+      <a href="#suivis" data-r="suivis">Mes suivis</a>
+      <a href="#methode" data-r="methode">Méthode</a>
+    </nav>
+    <span class="fresh" id="fresh"></span>
+  </header>
+  <main id="view" tabindex="-1" aria-live="polite">
+    <p class="loading">Chargement des données…</p>
+  </main>
+  <footer class="foot">
+    <p>Données : Parlement de Wallonie (open data), Parlement de la Région de Bruxelles-Capitale, Parlement de la Fédération Wallonie-Bruxelles. Les textes officiels font foi ; chaque fiche renvoie à sa source.</p>
+  </footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

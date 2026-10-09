@@ -1,0 +1,3 @@
+# La collecte n'utilise que la bibliothèque standard de Python (+ pdftotext et Node).
+# Le SDK Anthropic ne sert qu'aux résumés IA facultatifs (collect/summarize.py).
+anthropic>=1.12,<2
