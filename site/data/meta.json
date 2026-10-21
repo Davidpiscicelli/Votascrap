@@ -1,5 +1,5 @@
 {
- "genere_le": "2026-10-20T10:10:13+00:00",
+ "genere_le": "2026-10-21T10:12:45+00:00",
  "site": {
   "nom": "Plénière",
   "sous_titre": "Veille parlementaire Wallonie · Bruxelles · Fédération Wallonie-Bruxelles",
@@ -90,48 +90,48 @@
  "sources": {
   "wallonie_thesaurus": {
    "ok": true,
-   "maj": "2026-10-20T10:04:56+00:00",
+   "maj": "2026-10-21T10:08:13+00:00",
    "n": 363
   },
   "wallonie_deputes": {
    "ok": true,
-   "maj": "2026-10-20T10:04:58+00:00",
+   "maj": "2026-10-21T10:08:14+00:00",
    "n": 75
   },
   "wallonie_questions": {
    "ok": true,
-   "maj": "2026-10-20T10:05:21+00:00",
-   "n": 20625
+   "maj": "2026-10-21T10:08:34+00:00",
+   "n": 20703
   },
   "wallonie_dossiers": {
    "ok": true,
-   "maj": "2026-10-20T10:05:26+00:00",
+   "maj": "2026-10-21T10:08:53+00:00",
    "n": 247
   },
   "wallonie_votes": {
    "ok": true,
-   "maj": "2026-10-20T10:05:28+00:00",
+   "maj": "2026-10-21T10:08:54+00:00",
    "n": 543
   },
   "bruxelles_questions": {
    "ok": true,
-   "maj": "2026-10-20T10:05:32+00:00",
+   "maj": "2026-10-21T10:08:57+00:00",
    "n": 7427
   },
   "bruxelles_dossiers": {
    "ok": true,
-   "maj": "2026-10-20T10:09:52+00:00",
+   "maj": "2026-10-21T10:12:26+00:00",
    "n": 344
   },
   "fwb_documents": {
    "ok": true,
-   "maj": "2026-10-20T10:09:55+00:00",
+   "maj": "2026-10-21T10:12:28+00:00",
    "n": 18
   }
  },
  "compteurs": {
   "questions": {
-   "wal": 20625,
+   "wal": 20703,
    "bxl": 7427
   },
   "dossiers": {
@@ -140,6 +140,6 @@
   },
   "votes": 543,
   "deputes": 75,
-  "fwb": 37
+  "fwb": 55
  }
 }
