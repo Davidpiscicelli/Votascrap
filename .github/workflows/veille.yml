@@ -1,8 +1,10 @@
 name: Mise à jour de la veille
 
 on:
-  schedule:
-    - cron: "17 5 * * 1-6"   # 05:17 UTC, du lundi au samedi
+  # Planification suspendue le 31 octobre 2026 (le site n'est pas encore publié).
+  # Pour la réactiver, remettre :
+  #   schedule:
+  #     - cron: "17 5 * * 1-6"   # 05:17 UTC, du lundi au samedi
   workflow_dispatch: {}
 
 permissions:
